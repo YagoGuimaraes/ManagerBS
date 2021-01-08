@@ -6,22 +6,22 @@ namespace Exercicio01
     {
         static void Main(string[] args)
         {
-            var pessoas = RetornaPessoas();
-            Imprimir(pessoas);
+            var pessoasFissica = RetornaPessoas();
+            Imprimir(pessoasFissica);
             
         }
 
-        private static void Imprimir(IPessoa[] pessoas)
+        private static void Imprimir(PessoaFisica[] pessoasFissica)
         {
 
 
-            foreach (var item in pessoas.)
+            foreach (var item in pessoasFissica)
             {
                 Console.Write($"Nome: {item.Nome:C2}\n");          
             }
         }
 
-        private static IPessoa[] RetornaPessoas()
+        private static PessoaFisica[] RetornaPessoas()
         {
             var pessoaFisica = new PessoaFisica
             {
@@ -30,21 +30,11 @@ namespace Exercicio01
                 Endereco = "Rua Guacui, 300/801 - Sao Mateus - Juiz de Fora",
                 CPF = "119.357.476-57",
                 DataNascimento = "13/08/1994"
-            };
+            };          
 
-            var cadastroJuridica = new PessoaJuridica
+            return new PessoaFisica[]
             {
-                Nome = "ManagerBS",
-                Email = "managerbs@managerbs.com",
-                Endereco = "Rua ataliba de barros 182/113 - Sao Mateus - Juiz de Fora",
-                CNPJ = "30.152.302/0001-32",
-                NomeContato = "Flávio"
-            };
-
-            return new IPessoa[]
-            {
-                pessoaFisica,
-                cadastroJuridica
+                pessoaFisica               
             };
         }
     }
