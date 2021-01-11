@@ -11,7 +11,5 @@ namespace Exercicio01
         string Email { get; set; }
 
         string Endereco { get; set; }
-
-
     }
 }
