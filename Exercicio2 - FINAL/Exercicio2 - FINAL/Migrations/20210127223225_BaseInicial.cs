@@ -2,26 +2,33 @@
 
 namespace Exercicio2___FINAL.Migrations
 {
-    public partial class BaseIncial : Migration
+    public partial class BaseInicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "shared");
+
+            migrationBuilder.CreateSequence<int>(
+                name: "OrderNumbers",
+                schema: "shared");
+
             migrationBuilder.CreateTable(
-                name: "Aluno",
+                name: "Alunos",
                 columns: table => new
                 {
-                    AlunoID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AlunoID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEXT VALUE FOR shared.OrderNumbers"),
                     Matricula = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Aluno", x => x.AlunoID);
+                    table.PrimaryKey("PK_Alunos", x => x.AlunoID);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Endereco",
+                name: "Enderecos",
                 columns: table => new
                 {
                     EnderecoID = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -35,28 +42,32 @@ namespace Exercicio2___FINAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Endereco", x => x.EnderecoID);
+                    table.PrimaryKey("PK_Enderecos", x => x.EnderecoID);
                     table.ForeignKey(
-                        name: "FK_Endereco_Aluno_AlunoID",
+                        name: "FK_Enderecos_Alunos_AlunoID",
                         column: x => x.AlunoID,
-                        principalTable: "Aluno",
+                        principalTable: "Alunos",
                         principalColumn: "AlunoID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Endereco_AlunoID",
-                table: "Endereco",
+                name: "IX_Enderecos_AlunoID",
+                table: "Enderecos",
                 column: "AlunoID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Endereco");
+                name: "Enderecos");
 
             migrationBuilder.DropTable(
-                name: "Aluno");
+                name: "Alunos");
+
+            migrationBuilder.DropSequence(
+                name: "OrderNumbers",
+                schema: "shared");
         }
     }
 }

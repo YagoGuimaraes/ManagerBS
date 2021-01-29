@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Exercicio2___FINAL.Migrations
 {
     [DbContext(typeof(AlunosContext))]
-    [Migration("20210126121609_BaseIncial")]
-    partial class BaseIncial
+    [Migration("20210127223225_BaseInicial")]
+    partial class BaseInicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,10 +20,14 @@ namespace Exercicio2___FINAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
+            modelBuilder.HasSequence<int>("OrderNumbers", "shared");
+
             modelBuilder.Entity("Exercicio2___FINAL.Models.Aluno", b =>
                 {
                     b.Property<string>("AlunoID")
-                        .HasColumnType("nvarchar(450)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("NEXT VALUE FOR shared.OrderNumbers");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -36,7 +40,7 @@ namespace Exercicio2___FINAL.Migrations
 
                     b.HasKey("AlunoID");
 
-                    b.ToTable("Aluno");
+                    b.ToTable("Alunos");
                 });
 
             modelBuilder.Entity("Exercicio2___FINAL.Models.Endereco", b =>
@@ -69,7 +73,7 @@ namespace Exercicio2___FINAL.Migrations
 
                     b.HasIndex("AlunoID");
 
-                    b.ToTable("Endereco");
+                    b.ToTable("Enderecos");
                 });
 
             modelBuilder.Entity("Exercicio2___FINAL.Models.Endereco", b =>
