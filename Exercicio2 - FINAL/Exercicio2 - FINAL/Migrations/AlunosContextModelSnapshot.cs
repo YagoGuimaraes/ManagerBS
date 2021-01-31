@@ -18,14 +18,10 @@ namespace Exercicio2___FINAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.HasSequence<int>("OrderNumbers", "shared");
-
             modelBuilder.Entity("Exercicio2___FINAL.Models.Aluno", b =>
                 {
                     b.Property<string>("AlunoID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("NEXT VALUE FOR shared.OrderNumbers");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -78,7 +74,8 @@ namespace Exercicio2___FINAL.Migrations
                 {
                     b.HasOne("Exercicio2___FINAL.Models.Aluno", null)
                         .WithMany("Endereco")
-                        .HasForeignKey("AlunoID");
+                        .HasForeignKey("AlunoID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Exercicio2___FINAL.Models.Aluno", b =>

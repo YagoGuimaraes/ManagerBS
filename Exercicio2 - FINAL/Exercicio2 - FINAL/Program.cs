@@ -11,97 +11,248 @@ namespace Exercicio2___FINAL
     {
         static void Main(string[] args)
         {
-            int a = 0;
-            string escolha;
+            int w = 0;
+            int escolha;
+            var db = new AlunosContext();
 
-            while (a == 0)
+            while (w == 0)
             {
                 Console.WriteLine("******************************************\nEscolha uma opção: ");
-                Console.WriteLine("1) Cadastrar Aluno\n2) Alterar Aluno\n3) Deletar Aluno \n4) Imprimir listagem de produtos\n5) Sair do programa ");
+                Console.WriteLine("1) Cadastrar Aluno\n2) Alterar Aluno\n3) Deletar Aluno \n4) Consultar por matricula\n5) Consultar por nome\n6) Sair do Programa");
                 Console.WriteLine("******************************************");
-                escolha = Console.ReadLine();
+                escolha = Convert.ToInt32(Console.ReadLine());
 
                 switch (escolha)
                 {
-                    case "1":
-                        IncluirAluno();
+                    case 1:
+                        IncluirAluno(db);
                         break;
-                    case "2":
-                        DeletarAluno();
+                    case 2:
+                        AlterarAluno(db);
                         break;
-                    case "5":
-                        a++;
-                        break;                        
+                    case 3:
+                        ExcluirAluno(db);
+                        break;
+                    case 4:
+                        ConsultaPorMatricula(db);
+                        break;
+                    case 5:
+                        AcharNomeAluno(db);
+                        break;
+                    case 6: w++; break;
                     default:
                         Console.WriteLine("Escolha não existente;");
                         break;
                 }
             }
-                IncluirAluno();
             Console.WriteLine("Fim do programa.");
             Console.ReadKey();
         }
 
-        private static void DeletarAluno()
+        private static void AcharNomeAluno(AlunosContext db)
         {
+            string nome;
+            Console.Write("Escreva a parte do nome da pesquisa: ");
+            nome = Console.ReadLine();
+            var aluno = (from x in db.Alunos where x.Nome.Contains(nome) select x).FirstOrDefault();
+            if (aluno == null) Console.WriteLine("Aluno não existe");
+            else Console.WriteLine($"Aluno: {aluno.Nome} Matricula: {aluno.Matricula} e Email: {aluno.Email}.");
+        }
 
-            using (var db = new AlunosContext())
+        private static void ConsultaPorMatricula(AlunosContext db)
+        {
+            int p1;
+            var daoAluno = new AlunoDAL();
+            Console.WriteLine("Digite a Matricula para realizar a busca:");
+            p1 = Convert.ToInt32(Console.ReadLine());
+
+            var p2 = (from x in db.Alunos where x.Matricula == p1 select x).FirstOrDefault();
+
+            if (p2 == null)
+                Console.WriteLine($"Matricula {p1} não encontrado.");
+            else
             {
-                int p1 = 100;
+                p2 = daoAluno.ImprimirAluno(p2, p1);
+                Console.WriteLine($"Nome:{p2.Nome}, \nMatricula:{p2.Matricula}, Email:{p2.Email}.");
+                foreach (var item in p2.Endereco)
+                {
+                    Console.WriteLine($"Aluno:{p2.Nome}\nTipo de Endereco:{item.TipoEndereco}\nLogradouro:{item.Logradouro}\nCidade:{item.Cidade}, ");
+                    Console.WriteLine($"Bairro:{item.Bairro}\nNumero:{item.Bairro}Complemento:{item.Complemento}");
+                    
+                }
+            }
+        }
+
+        private static void ExcluirAluno(AlunosContext db)
+        {
+            int p1;
+            var daoAluno = new AlunoDAL();
+            Console.WriteLine("Digite a Matricula para realizar a exclusão:");
+            p1 = Convert.ToInt32(Console.ReadLine());
+
+            var p2 = (from x in db.Alunos where x.Matricula == p1 select x).FirstOrDefault();
+
+            if (p2 == null)
+                Console.WriteLine($"Matricula {p1} não encontrado.");
+            else
+            {
+                daoAluno.Excluir(p2);
+            }
+
+        }
+
+        private static void AlterarAluno(AlunosContext db)
+        {
+                int p1;
+                int escolha, escolha2;
+                int a = 0;
+                var end = new List<Endereco>();
+                var daoAluno = new AlunoDAL();
+
+                Console.WriteLine("Digite a Matricula para realizar a alteração:");
+                p1 = Convert.ToInt32(Console.ReadLine());
+
 
                 var p2 = (from x in db.Alunos where x.Matricula == p1 select x).FirstOrDefault();
 
                 if (p2 == null)
-                    Console.WriteLine("Produto de id='Produto2' não encontrado.");
+                    Console.WriteLine($"Produto de id {p1} não encontrado.");
+
                 else
                 {
-                    p2.Nome = "TESTE YAGO 123";
-                    db.SaveChanges();
-                }
+                    adicionarAluno(db, p2);
+                    Console.Write("Deseja Alterar Tabem O Endereco do Aluno? Se Sim digite 1, Se Nao digite 2: ");
+                    escolha = Convert.ToInt32(Console.ReadLine());
 
-            }
+                switch (escolha) 
+                {
+                    case 1:
+                        {  
+                            while (a == 0)
+                            {
+                                Console.Write("1 - Cadastrar novo Endereco\n2 - Alterar Enderenço\n3 - Sair");
+                                escolha2 = Convert.ToInt32(Console.ReadLine());
+
+                                switch (escolha2)
+                                {
+                                    case 1:
+                                        adicionarEndereco(db, end);
+                                        p2.Endereco = end;
+                                        db.SaveChanges();
+                                        break;
+                                    case 2:alterarEndereco(db,p2.Endereco);break;
+                                    case 3: a++; break;
+                                }
+                                
+                            }
+                            break;
+                        }
+                }
+                daoAluno.Alterar(p2);
+                
+                }
         }
 
-        private static void IncluirAluno()
+        private static void alterarEndereco(AlunosContext db, IList<Endereco> endereco)
+        {
+
+            string p1;
+            Console.WriteLine("Qual tipo de Endereço ?");
+
+
+            foreach (var item in endereco)
+            {
+                Console.WriteLine($"- {item.Logradouro}\n");
+            }
+
+            p1 = Console.ReadLine();
+            var p2 = (from x in db.Enderecos where x.TipoEndereco == p1 select x).FirstOrDefault();
+
+            Console.Write("Digite o tipo de endereco ( Residencial, Comercial, Cobrança, etc...): ");
+            p2.TipoEndereco = Console.ReadLine();
+            Console.Write("Logradouro: ");
+            p2.Logradouro = Console.ReadLine();
+            Console.Write("Numero: ");
+            p2.Numero = Console.ReadLine();
+            Console.Write("Complemento: ");
+            p2.Complemento = Console.ReadLine();
+            Console.Write("Bairro: ");
+            p2.Bairro = Console.ReadLine();
+            Console.Write("Cidade: ");
+            p2.Cidade = Console.ReadLine();
+
+            db.SaveChanges();
+
+        }
+
+        private static void IncluirAluno(AlunosContext db)
+        {
+            var end = new List<Endereco>();
+            var al = new Aluno();
+            adicionarAluno(db, al);
+            adicionarEndereco(db, end);
+            al.Endereco = end;
+            salvarAluno(al);            
+        }
+
+        private static void salvarAluno(Aluno al)
         {
             var daoAluno = new AlunoDAL();
-
-            var p2 = new Aluno();
-
-            //Console.WriteLine("Digite o ID do aluno");
-            //p2.AlunoID = Console.ReadLine();
-
-            Console.WriteLine("Digite o nome do Aluno");
-            p2.Nome = Console.ReadLine();
-
-            Console.WriteLine("Digite a Matricula do Aluno");
-            p2.Matricula = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("Digite o Email do Aluno");
-            p2.Email = Console.ReadLine();
-
-            p2.Endereco = new List<Endereco>
-                {
-                    CadastraEndereco()
-                };
-
-            daoAluno.Inserir(p2);
+            daoAluno.Inserir(al);
         }
 
-        static Endereco CadastraEndereco()
+        private static void adicionarEndereco(AlunosContext db, List<Endereco> end)
         {
-                var p1 = new Endereco();
+            int a = 0;
+            int escolha;
 
-                Console.WriteLine("Digite o Id do Endereco");
-                p1.EnderecoID = Console.ReadLine();
+            while (a == 0)
+            {
+                Console.WriteLine("1 - Cadastrar novo endereco\n2 - Sair");
+                escolha = Convert.ToInt32(Console.ReadLine());
+                switch(escolha)
+                {
+                    case 1:
+                        {
+                            end.Add(cadastrarEndereco());
+                            break;
+                        }
+                    case 2: a++; break;
+                }
+            }          
+        }
 
-                Console.WriteLine("Digite o Logradouro");
-                p1.Logradouro = Console.ReadLine();
+        private static Endereco cadastrarEndereco()
+        {
+            var p1 = new Endereco();
+            Console.Write("Digite o tipo de endereco ( Residencial, Comercial, Cobrança, etc...): ");
+            p1.TipoEndereco = Console.ReadLine();
+            Console.Write("Logradouro: ");
+            p1.Logradouro = Console.ReadLine();
+            Console.Write("Numero: ");
+            p1.Numero = Console.ReadLine();
+            Console.Write("Complemento: ");
+            p1.Complemento = Console.ReadLine();
+            Console.Write("Bairro: ");
+            p1.Bairro = Console.ReadLine();
+            Console.Write("Cidade: ");
+            p1.Cidade = Console.ReadLine();
 
-                return p1;
+            if (p1.EnderecoID == null)
+                p1.EnderecoID = Guid.NewGuid().ToString();
+
+            return p1;
+        }
+
+        private static void adicionarAluno(AlunosContext db, Aluno al)
+        {
+            Console.Write("Digite o nome do Aluno: ");
+            al.Nome = Console.ReadLine();
+            Console.Write("Matricula: ");
+            al.Matricula = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Email: ");
+            al.Email = Console.ReadLine();
         }
     }
-
-
 }
 

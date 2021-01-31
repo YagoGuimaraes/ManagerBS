@@ -6,18 +6,11 @@ namespace Exercicio2___FINAL.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "shared");
-
-            migrationBuilder.CreateSequence<int>(
-                name: "OrderNumbers",
-                schema: "shared");
-
             migrationBuilder.CreateTable(
                 name: "Alunos",
                 columns: table => new
                 {
-                    AlunoID = table.Column<string>(type: "nvarchar(450)", nullable: false, defaultValueSql: "NEXT VALUE FOR shared.OrderNumbers"),
+                    AlunoID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Matricula = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -48,7 +41,7 @@ namespace Exercicio2___FINAL.Migrations
                         column: x => x.AlunoID,
                         principalTable: "Alunos",
                         principalColumn: "AlunoID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -64,10 +57,6 @@ namespace Exercicio2___FINAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Alunos");
-
-            migrationBuilder.DropSequence(
-                name: "OrderNumbers",
-                schema: "shared");
         }
     }
 }

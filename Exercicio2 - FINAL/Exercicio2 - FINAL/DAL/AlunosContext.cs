@@ -13,12 +13,7 @@ namespace Exercicio2___FINAL.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasSequence<int>("OrderNumbers", schema: "shared")
-                .StartsAt(1)
-                .IncrementsBy(1);
-            modelBuilder.Entity<Aluno>()
-                .Property(o => o.AlunoID)
-                .HasDefaultValueSql("NEXT VALUE FOR shared.OrderNumbers");
+            modelBuilder.Entity<Aluno>().HasMany(e => e.Endereco).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>

@@ -21,21 +21,36 @@ namespace Exercicio2___FINAL.DAL
             }
         }
 
+        public void Alterar(Aluno obj)
+        {
+            using (var contexto = new AlunosContext())
+            {
+                contexto.Update(obj);
+                contexto.SaveChanges();
+            }
+        }
+
+
+        public Aluno ImprimirAluno(Aluno aluno, int matricula)
+        {
+            using (var alunos = new AlunosContext())
+            {
+                aluno = alunos.Alunos.Where(x => x.Matricula == matricula).FirstOrDefault();
+            }
+
+            return aluno;
+        }
+
         public void Excluir(Aluno obj)
         {
             using (var contexto = new AlunosContext())
             {
-                //Recupera todos os itens gravados na base
-                var itensAnteriores = contexto.Alunos.Where(x => x.Matricula == obj.Matricula).ToList();
-
-                //Altera o State de cada item para Deleted
-                foreach (var item in itensAnteriores)
-                    contexto.Entry(item).State = EntityState.Deleted;
-
-                //Altera o state do pedido para Deleted
-                contexto.Entry(obj).State = EntityState.Deleted;
+                contexto.Remove(obj);
                 contexto.SaveChanges();
             }
         }
+
+
+
     }
 }
